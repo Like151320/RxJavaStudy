@@ -1,0 +1,8 @@
+### My default template template
+*.iml
+.gradle
+.idea
+build
+/local.properties
+app/src/test
+app/src/androidTest
