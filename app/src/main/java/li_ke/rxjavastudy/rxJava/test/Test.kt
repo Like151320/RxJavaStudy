@@ -17,31 +17,22 @@ class Test {
 	fun start() {
 //		Observable.timer(1, TimeUnit.SECONDS)
 		Observable.error<String>(NullPointerException())
-//		Observable
-//			.merge(
-//				Observable.just<String>("1"),
-//				Observable.timer(100, TimeUnit.MILLISECONDS)
-//					.map { throw NullPointerException() }
-//			)
-			.map { println("map1");"m1" }
-//			.onErrorResumeNext { t ->
+			.doOnError { println("doOnError") }
 			//使用 onErrorResumeNext 处理错误,就不会走 onError 了
-//				println("onErrorGo")
-//				Observable.just("s")
-//				Observable.empty()//空Observable不走onNext
-//			}
-			.doOnError { println("doOnError: $it") }
-			.retryWhen {
-				println("retryWhen")
-				it.flatMap {
-					println("in retryWhen")
-//					if (it is NullPointerException) {
-						Observable.timer(100, TimeUnit.MILLISECONDS)
-//					} else
-//						Observable.error<String>(CancellationException())
-				}
+
+			//直接使用 retry 判断重试次数
+			.retry { i, t ->
+				println(i)
+				i < 3
 			}
-			.map { println("map2");"m2" }
+//			.retryWhen { attempts ->
+//				//出现错误的 observable
+//				attempts.flatMap {
+//					//使用 flatMap添加重试订阅逻辑，当出现错误时走flatMap内部
+//					//执行重试语句
+//					Observable.create<Int> { it.onNext(1) }
+//				}
+//			}
 			.delay(1, TimeUnit.SECONDS)
 			.subscribe(
 				{ println("next") },
